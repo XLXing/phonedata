@@ -1,22 +1,30 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
-	"github.com/xluohome/phonedata"
+	"github.com/XLXing/phonedata"
 )
 
 func main() {
-
-	if len(os.Args) < 2 {
-		fmt.Print("请输入手机号")
-		return
+	fmt.Println("请输入手机号:")
+	input := bufio.NewScanner(os.Stdin)
+	for input.Scan() {
+		line := input.Text()
+		pr, err := phonedata.Find(line)
+		if err != nil {
+			fmt.Printf("%s\n", err)
+			fmt.Println("请重新输入手机号:")
+		} else {
+			fmt.Println(pr)
+			fmt.Println("请输入手机号:")
+		}
 	}
-	pr, err := phonedata.Find(os.Args[1])
-	if err != nil {
-		fmt.Printf("%s", err)
-		return
+	if err := input.Err(); err != nil {
+		fmt.Println(os.Stderr)
+		fmt.Printf("find phonedata: %v\n", err)
+		os.Exit(1)
 	}
-	fmt.Print(pr)
 }
